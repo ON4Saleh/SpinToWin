@@ -1,0 +1,14 @@
+{
+    "banditlist": [
+        {
+            "name": "Duck",
+            "damage": 30,
+            "health": 1000
+        },
+        {
+            "name": "Donald",
+            "damage": 80,
+            "health": 2000
+        }
+    ]
+}

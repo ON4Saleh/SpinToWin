@@ -129,7 +129,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -22.512405
+      value: -18.58
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
       propertyPath: m_LocalPosition.y
@@ -178,8 +178,35 @@ PrefabInstance:
     - {fileID: 8934777400606672865, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
     - {fileID: 65702495048144492, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 14668215}
   m_SourcePrefab: {fileID: 100100000, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
+--- !u!1 &14668214 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
+  m_PrefabInstance: {fileID: 14668213}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &14668215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14668214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271e31c2f64484342adf58db1f02bc56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: {fileID: 0}
+  player: {fileID: 0}
+  sightDistance: 20
+  fieldOfView: 85
+  currentState: 
+  eyeHeight: 0
+  door: {fileID: 0}
 --- !u!1 &198095549
 GameObject:
   m_ObjectHideFlags: 0
