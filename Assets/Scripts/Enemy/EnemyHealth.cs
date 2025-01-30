@@ -36,7 +36,7 @@ public class EnemyHealth : MonoBehaviour
     {
         float healthFraction = (float)currentHealth / bandit.health;
         healthimg.fillAmount = healthFraction;
-        Debug.Log("Enemy health updated: " + currentHealth);
+        Debug.Log("Enemy updated: " + currentHealth);
     }
 
     private void OpenDoor()

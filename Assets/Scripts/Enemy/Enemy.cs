@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent navMeshAgent;
     [SerializeField] private WaypointPath path;
     private Animator animator;
-    private Weapon Weapon;
+   // private Weapon Weapon;
     public NavMeshAgent NavMeshAgent => navMeshAgent;
     public WaypointPath WayPath => path;
     public GameObject player;
@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
         stateMachine = GetComponent<StateMachine>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        Weapon = GetComponent<Weapon>();
+       // Weapon = GetComponent<Weapon>();
         stateMachine.Initialize();
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
         }
         EnemyWeaponHolder = transform.GetComponentInChildren<Transform>().Find("EnemyWeaponHolder")?.gameObject;
-        Weapon = EnemyWeaponHolder.GetComponentInChildren<Weapon>();
+      //  Weapon = EnemyWeaponHolder.GetComponentInChildren<Weapon>();
 
     }
 
@@ -102,12 +102,12 @@ public class Enemy : MonoBehaviour
             {
                 animator.SetBool("isShooting", true);
                 navMeshAgent.speed = 1.5f;
-                Weapon.HandleShooting();
+              //  Weapon.HandleShooting();
                 EnemyWeaponHolder.gameObject.SetActive(true);
 
                 SoundManager.Instance.PlaySFX("Trump");
             }
-            StartCoroutine(Weapon.EnemyBurstFire());
+         //   StartCoroutine(Weapon.EnemyBurstFire());
         }
         else if (currentState != "AttackState" && animator.GetBool("isShooting"))
         {

@@ -1,5 +1,5 @@
 using UnityEngine;
-using static Bullet;
+//using static Bullet;
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Vector3 initialPosition;
 
     private Enemy enemy;
-    private Bullet bullet;
+   // private Bullet bullet;
 
     private void Start()
     {
