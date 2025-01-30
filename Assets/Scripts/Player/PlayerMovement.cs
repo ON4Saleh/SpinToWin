@@ -4,6 +4,8 @@ using UnityEngine.AI;
 public class PlayerMovement : MonoBehaviour
 {
     private NavMeshAgent navMeshAgent;
+    [SerializeField]
+    private float movementSpeed = 5f;
 
     private void Start()
     {
@@ -23,6 +25,16 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("NavMeshAgent is missing on this GameObject!");
         }
+        else
+        {
+            // Set movement properties
+            navMeshAgent.speed = movementSpeed;
+            navMeshAgent.acceleration = 20f;
+            navMeshAgent.stoppingDistance = 0.1f;
+
+            // Disable automatic rotation
+            navMeshAgent.updateRotation = false;
+        }
     }
 
     private void HandleMouseInput()
@@ -37,11 +49,12 @@ public class PlayerMovement : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit)) 
+        if (Physics.Raycast(ray, out hit))
         {
-            navMeshAgent.destination = hit.point; 
+            navMeshAgent.destination = hit.point;
         }
     }
+
     private void DebugRayForCursor()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

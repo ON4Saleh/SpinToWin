@@ -4565,7 +4565,7 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 5b9b9749fe2347b4895171244ed93a5d, type: 3}
 --- !u!4 &1713461486 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 1750150297244317650, guid: 5b9b9749fe2347b4895171244ed93a5d, type: 3}
+  m_CorrespondingSourceObject: {fileID: 565563133316854158, guid: 5b9b9749fe2347b4895171244ed93a5d, type: 3}
   m_PrefabInstance: {fileID: 1713461485}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1713461487 stripped
@@ -5741,7 +5741,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4207253686661344062, guid: 2f0d4c81425446d4e8a64500a9c71b30, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.3328528
+      value: 11.05
       objectReference: {fileID: 0}
     - target: {fileID: 4207253686661344062, guid: 2f0d4c81425446d4e8a64500a9c71b30, type: 3}
       propertyPath: m_LocalRotation.w
