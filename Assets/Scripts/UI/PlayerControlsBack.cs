@@ -6,10 +6,10 @@ public class PlayerControlsBack : MonoBehaviour
     public GameObject PlayerControlsMenu;
     public void back()
     {
-        SceneManager.LoadSceneAsync("MainMenu");
+        SceneManager.LoadSceneAsync(0);
     }
     public void start()
     {
-        SceneManager.LoadSceneAsync("MergeMap");
+        SceneManager.LoadSceneAsync(1);
     }
 }

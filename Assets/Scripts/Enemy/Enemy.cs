@@ -1,13 +1,13 @@
 using UnityEngine.AI;
 using UnityEngine;
-
+using System.IO;
 public class Enemy : MonoBehaviour
 {
     private StateMachine stateMachine;
     private NavMeshAgent navMeshAgent;
     [SerializeField] private WaypointPath path;
     private Animator animator;
-   // private Weapon Weapon;
+    private Weapon Weapon;
     public NavMeshAgent NavMeshAgent => navMeshAgent;
     public WaypointPath WayPath => path;
     public GameObject player;
@@ -20,17 +20,16 @@ public class Enemy : MonoBehaviour
     private Vector3 lastKnownPosition;
     public Vector3 LastKnownPos { get => lastKnownPosition; set => lastKnownPosition = value; }
     private int currentWaypointIndex = 0;
-    public Door door;
- 
 
-    private Bandits bandit;
-    private PlayerHealth playerHealth;
+    [SerializeField] GameObject door; 
+    private bool doorOpen;
+
     private void Start()
     {
         stateMachine = GetComponent<StateMachine>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-       // Weapon = GetComponent<Weapon>();
+        Weapon = GetComponent<Weapon>();
         stateMachine.Initialize();
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -39,7 +38,7 @@ public class Enemy : MonoBehaviour
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
         }
         EnemyWeaponHolder = transform.GetComponentInChildren<Transform>().Find("EnemyWeaponHolder")?.gameObject;
-      //  Weapon = EnemyWeaponHolder.GetComponentInChildren<Weapon>();
+        Weapon = EnemyWeaponHolder.GetComponentInChildren<Weapon>();
 
     }
 
@@ -58,12 +57,7 @@ public class Enemy : MonoBehaviour
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
         }
     }
-    public void Die()
-    {
-        Debug.Log("Enemy died!"); 
-        door.OpenDoor(); 
-        Destroy(gameObject);
-    }
+
     public bool canSeePlayer()
     {
         if (player != null)
@@ -93,7 +87,14 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-
+    private void OpenDoor()
+    {
+        Animator doorAnimator = door.GetComponent<Animator>();
+        if (doorAnimator != null)
+        {
+            doorAnimator.SetBool("isOpen", true);
+        }
+    }
     private void HandleMovement()
     {
         if (currentState == "AttackState" && !animator.GetBool("isShooting"))
@@ -102,27 +103,61 @@ public class Enemy : MonoBehaviour
             {
                 animator.SetBool("isShooting", true);
                 navMeshAgent.speed = 1.5f;
-              //  Weapon.HandleShooting();
+                Weapon.HandleShooting();
                 EnemyWeaponHolder.gameObject.SetActive(true);
-
+             
                 SoundManager.Instance.PlaySFX("Trump");
             }
-         //   StartCoroutine(Weapon.EnemyBurstFire());
+            StartCoroutine(Weapon.EnemyBurstFire()); 
         }
         else if (currentState != "AttackState" && animator.GetBool("isShooting"))
         {
             animator.SetBool("isShooting", false);
             EnemyWeaponHolder.gameObject.SetActive(false);
             navMeshAgent.speed = 3.5f;
-
+        
         }
 
         if (currentState != "AttackState")
         {
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
             EnemyWeaponHolder.gameObject.SetActive(false);
-
+    
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+           // PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+            //if (playerController != null)
+            //{
+                //if (enemyName == "Duck")
+                //{
+                //    playerController.waterLevel -= 10;
+                //    enemyWaterLevel -= 30;
+                //    playerController.score += 20;
 
+                //    if (enemyWaterLevel <= 0)
+                //    {
+                //        Destroy(gameObject);
+                //        OpenDoor();
+                //        playerController.waterLevel += 1000;
+                //    }
+                //}
+                //else if (enemyName == "Donald")
+                //{
+                //    playerController.moneyLevel -= enemyDamage;
+                //    enemyMoneyLevel -= 30;
+                //    playerController.score += 20;
+
+                //    if (enemyMoneyLevel <= 0)
+                //    {
+                //        Destroy(gameObject);
+                //        playerController.moneyLevel += 10000;
+                //    }
+                //}
+            //}
+        }
+    }
 }
