@@ -1,13 +1,18 @@
 using UnityEngine;
-using UnityEngine.AI;
 
-public class PlayerMovement : MonoBehaviour
+public class BladeMovement : MonoBehaviour
 {
-    private NavMeshAgent navMeshAgent;
+    private Rigidbody rb;
+    public float pushForce = 10f;  // Force applied when clicking
+    public float circularForce = 5f; // Constant force for circular motion
+    public float radius = 5f; // Radius of the circular motion
+
+    private Vector3 centerPosition; // The center of the circular motion
 
     private void Start()
     {
-        InitializeNavMeshAgent();
+        InitializeRigidbody();
+        centerPosition = transform.position + (Vector3.right * radius);
     }
 
     private void Update()
@@ -16,35 +21,75 @@ public class PlayerMovement : MonoBehaviour
         DebugRayForCursor();
     }
 
-    private void InitializeNavMeshAgent()
+    private void FixedUpdate()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        if (navMeshAgent == null)
+        ApplyCircularMotion();
+    }
+
+    private void InitializeRigidbody()
+    {
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            Debug.LogError("NavMeshAgent is missing on this GameObject!");
+            Debug.LogError("Rigidbody is missing on this GameObject!");
         }
     }
 
     private void HandleMouseInput()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            MoveToCursor();
+            PushToCursor();
         }
     }
 
-    private void MoveToCursor()
+    private void PushToCursor()
+{
+    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    RaycastHit hit;
+    if (Physics.Raycast(ray, out hit))
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit)) 
+        // Ignore clicks on the blade itself
+        if (hit.collider.gameObject == gameObject)
         {
-            navMeshAgent.destination = hit.point; 
+            return;
         }
+
+        Vector3 direction = (hit.point - transform.position).normalized;
+        rb.AddForce(direction * pushForce, ForceMode.Impulse);
     }
+}
+
     private void DebugRayForCursor()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction * 100, Color.green);
+    }
+
+    private void ApplyCircularMotion()
+    {
+        Vector3 toCenter = centerPosition - transform.position;
+        Vector3 tangentDirection = Vector3.Cross(toCenter.normalized, Vector3.up).normalized;
+        rb.AddForce(tangentDirection * circularForce, ForceMode.Force);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            return;
+        }
+
+        // Calculate collision force (impulse magnitude)
+        float impactForce = collision.impulse.magnitude;
+
+        // Calculate the push-back force (double the impact force)
+        float pushBackForce = impactForce;
+
+        // Get the collision normal (direction perpendicular to the surface)
+        Vector3 collisionNormal = collision.contacts[0].normal;
+
+        // Apply force in the opposite direction of the impact
+        rb.AddForce(collisionNormal * pushBackForce, ForceMode.Impulse);
     }
 }
