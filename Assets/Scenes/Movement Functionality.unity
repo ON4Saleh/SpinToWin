@@ -171,6 +171,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: beyblade3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -7029948723529949830, guid: eec9bd19a8f67c940a09cf8365349d83, type: 3}
@@ -195,7 +199,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &198095550
 Transform:
   m_ObjectHideFlags: 0
@@ -768,7 +772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &886667829
 Transform:
   m_ObjectHideFlags: 0
@@ -1495,6 +1499,10 @@ PrefabInstance:
     - target: {fileID: 8353874250973331306, guid: 2c361a044432b324eb5c9281075bee92, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8353874250973331306, guid: 2c361a044432b324eb5c9281075bee92, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
