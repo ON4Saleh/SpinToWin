@@ -545,8 +545,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d4327e7c116004d9107a3c5a5acb85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0, z: 0}
   target: {fileID: 15110928}
   smoothTime: 0
+  currentVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &388780034
 MonoBehaviour:
   m_ObjectHideFlags: 0
