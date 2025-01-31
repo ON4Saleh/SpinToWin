@@ -87,14 +87,6 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-    private void OpenDoor()
-    {
-        Animator doorAnimator = door.GetComponent<Animator>();
-        if (doorAnimator != null)
-        {
-            doorAnimator.SetBool("isOpen", true);
-        }
-    }
     private void HandleMovement()
     {
         if (currentState == "AttackState" && !animator.GetBool("isShooting"))
@@ -102,13 +94,11 @@ public class Enemy : MonoBehaviour
             if (canSeePlayer())
             {
                 animator.SetBool("isShooting", true);
-                navMeshAgent.speed = 1.5f;
-                Weapon.HandleShooting();
+                navMeshAgent.speed = 3.5f;
                 EnemyWeaponHolder.gameObject.SetActive(true);
              
                 SoundManager.Instance.PlaySFX("Trump");
             }
-            StartCoroutine(Weapon.EnemyBurstFire()); 
         }
         else if (currentState != "AttackState" && animator.GetBool("isShooting"))
         {
@@ -123,41 +113,6 @@ public class Enemy : MonoBehaviour
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
             EnemyWeaponHolder.gameObject.SetActive(false);
     
-        }
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-           // PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
-            //if (playerController != null)
-            //{
-                //if (enemyName == "Duck")
-                //{
-                //    playerController.waterLevel -= 10;
-                //    enemyWaterLevel -= 30;
-                //    playerController.score += 20;
-
-                //    if (enemyWaterLevel <= 0)
-                //    {
-                //        Destroy(gameObject);
-                //        OpenDoor();
-                //        playerController.waterLevel += 1000;
-                //    }
-                //}
-                //else if (enemyName == "Donald")
-                //{
-                //    playerController.moneyLevel -= enemyDamage;
-                //    enemyMoneyLevel -= 30;
-                //    playerController.score += 20;
-
-                //    if (enemyMoneyLevel <= 0)
-                //    {
-                //        Destroy(gameObject);
-                //        playerController.moneyLevel += 10000;
-                //    }
-                //}
-            //}
         }
     }
 }

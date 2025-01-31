@@ -3,250 +3,79 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [Header("Bullet Settings")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform bulletSpawnPoint;
-    [SerializeField] float bulletSpeed = 100f;
-    [SerializeField] float bulletLifetime = 3f;
+    [SerializeField] private float bulletSpeed = 100f;
+    [SerializeField] private float bulletLifetime = 3f;
 
-    [SerializeField] float shootingDelay = 0.2f;
-    [SerializeField] float burstDelay = 0.5f;
-    [SerializeField] int bulletsPerBurst = 3;
-    [SerializeField] float spreadIntensity = 0.1f;
+    [Header("Burst Settings")]
+    [SerializeField] private int bulletsPerBurst = 3; // Number of bullets per burst
+    [SerializeField] private float burstDelay = 1f; // Delay between bursts
+    [SerializeField] private float shootingDelay = 0.2f; // Delay between bullets in a burst
 
-    [SerializeField] int maxBulletCapacity = 50;
-    [SerializeField] float reloadTime = 1f;
+    [Header("Ammo Settings")]
+    [SerializeField] private int maxBulletCapacity = 50; // Maximum bullets the weapon can hold
+    [SerializeField] private float reloadTime = 1f; // Time to reload
 
-    [SerializeField] Camera playerCamera;
-    private Enemy enemy;
-    private bool shootsound = false;
-    [SerializeField] int currentBulletCount;
-    [SerializeField] bool canShoot = true;
-    [SerializeField] bool isReloading = false;
-    [SerializeField] private Transform playerTransform;
-
-    internal Animator animator;
-
-    public Vector3 spawnPosition;
-    public Vector3 spawnRotation;
-    public bool weaponisActive;
-    private enum ShootingMode
-    {
-        Single,
-        Burst,
-        Auto
-    }
-
-    [SerializeField] private ShootingMode currentShootingMode;
+    private int currentBulletCount;
+    private bool isReloading = false;
 
     private void Start()
     {
-        currentBulletCount = maxBulletCapacity;
-        enemy = GetComponentInParent<Enemy>();
-        playerCamera = Camera.main;
+        currentBulletCount = maxBulletCapacity; // Initialize bullet count
+        StartCoroutine(AutoBurstFire()); // Start automatic burst firing
     }
 
-    private void Update()
+    private IEnumerator AutoBurstFire()
     {
-        if (weaponisActive)
+        while (true) // Infinite loop for continuous firing
         {
-            if (isReloading) return;
-
-            if (Input.GetKeyDown(KeyCode.R) && currentBulletCount < maxBulletCapacity)
+            if (!isReloading && currentBulletCount > 0) // Check if not reloading and has bullets
+            {
+                for (int i = 0; i < bulletsPerBurst && currentBulletCount > 0; i++) // Fire bullets in burst
+                {
+                    FireBullet();
+                    yield return new WaitForSeconds(shootingDelay); // Delay between bullets in burst
+                }
+                yield return new WaitForSeconds(burstDelay); // Delay between bursts
+            }
+            else if (currentBulletCount <= 0 && !isReloading) // Reload if out of bullets
             {
                 StartCoroutine(Reload());
-                return;
             }
-
-            HandleShooting();
+            yield return null; // Wait for the next frame
         }
-    }
-
-    private void Awake()
-    {
-        animator = GetComponent<Animator>();
-    }
-
-    public void HandleShooting()
-    {
-        if (!canShoot || currentBulletCount <= 0) return;
-        if (gameObject.CompareTag("PlayerWeapon"))
-        {
-            if (currentShootingMode == ShootingMode.Single && Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                StartCoroutine(SingleFire());
-                PlayShootAnimation(true);
-                shootsound = true;
-                SoundManager.Instance.PlaySFX("WaterGun");
-            }
-            else if (currentShootingMode == ShootingMode.Burst && Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                StartCoroutine(BurstFire());
-                PlayShootAnimation(true);
-                shootsound = true;
-                SoundManager.Instance.PlaySFX("WaterGun");
-            }
-            else if (currentShootingMode == ShootingMode.Auto && Input.GetKey(KeyCode.Mouse0))
-            {
-                StartCoroutine(AutoFire());
-                PlayShootAnimation(true);
-                shootsound = true;
-                SoundManager.Instance.PlaySFX("WaterGun");
-            }
-            else if (!Input.GetKey(KeyCode.Mouse0))
-            {
-                PlayShootAnimation(false);
-                shootsound = false;
-            }
-        }
-        else if (gameObject.CompareTag("EnemyWeapon"))
-        {
-
-        }
-    }
-
-    private void PlayShootAnimation(bool isShooting)
-    {
-        animator.SetBool("IsShooting", isShooting);
-    }
-
-    private IEnumerator SingleFire()
-    {
-        canShoot = false;
-        FireBullet();
-        yield return new WaitForSeconds(shootingDelay);
-        canShoot = true;
-    }
-
-    private IEnumerator BurstFire()
-    {
-        canShoot = false;
-        for (int i = 0; i < bulletsPerBurst && currentBulletCount > 0; i++)
-        {
-            FireBullet();
-            SoundManager.Instance.PlaySFX("WaterGun");
-            yield return new WaitForSeconds(shootingDelay);
-        }
-        yield return new WaitForSeconds(burstDelay - (bulletsPerBurst * shootingDelay));
-        canShoot = true;
-    }
-
-    private IEnumerator AutoFire()
-    {
-        canShoot = false;
-        while (Input.GetKey(KeyCode.Mouse0) && currentBulletCount > 0)
-        {
-            FireBullet();
-            SoundManager.Instance.PlaySFX("WaterGun");
-            yield return new WaitForSeconds(shootingDelay);
-        }
-        canShoot = true;
     }
 
     private void FireBullet()
     {
-        if (currentBulletCount <= 0)
-        {
-            return;
-        }
+        if (currentBulletCount <= 0) return; // Don't fire if out of bullets
 
-        currentBulletCount--;
-        Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
+        currentBulletCount--; // Reduce bullet count
+        Vector3 shootingDirection = bulletSpawnPoint.forward; // Shoot in the direction of the spawn point
 
+        // Instantiate and fire the bullet
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
         bullet.transform.forward = shootingDirection;
 
         Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
         bulletRigidbody.AddForce(shootingDirection * bulletSpeed, ForceMode.Impulse);
 
-        StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetime));
-    }
-    private Vector3 CalculateDirectionAndSpread()
-    {
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
-        Vector3 targetPoint;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            targetPoint = hit.point;
-        }
-        else
-        {
-            targetPoint = ray.GetPoint(100);
-        }
-
-        Vector3 direction = targetPoint - bulletSpawnPoint.position;
-        float spreadX = Random.Range(-spreadIntensity, spreadIntensity);
-        float spreadY = Random.Range(-spreadIntensity, spreadIntensity);
-
-        return direction + new Vector3(spreadX, spreadY, 0);
-    }
-    private Vector3 EnemyCalculateDirectionAndSpread()
-    {
-        Vector3 direction = playerTransform.position - bulletSpawnPoint.position;
-
-        float spreadX = Random.Range(-spreadIntensity, spreadIntensity);
-        float spreadY = Random.Range(-spreadIntensity, spreadIntensity);
-
-        return direction + new Vector3(spreadX, spreadY, 0);
-    }
-
-    private void EnemyFireBullet()
-    {
-        if (currentBulletCount <= 0) return;
-
-        currentBulletCount--;
-        Vector3 shootingDirection = EnemyCalculateDirectionAndSpread().normalized;
-
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
-        bullet.transform.forward = shootingDirection;
-
-        Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
-        bulletRigidbody.AddForce(shootingDirection * bulletSpeed, ForceMode.Impulse);
-        Debug.Log("Bullet Fired");
-        StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetime));
-    }
-    private void OnDrawGizmos()
-    {
-        if (bulletSpawnPoint != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(bulletSpawnPoint.position, bulletSpawnPoint.position + bulletSpawnPoint.forward * 10f);
-        }
-    }
-
-    public IEnumerator EnemyBurstFire()
-    {
-        canShoot = false;
-        while (enemy.canSeePlayer())
-        {
-            for (int i = 0; i < bulletsPerBurst; i++)
-            {
-                EnemyFireBullet();
-                yield return new WaitForSeconds(shootingDelay);
-            }
-
-            yield return new WaitForSeconds(burstDelay);
-
-            yield return new WaitForSeconds(1f);
-        }
-
-        canShoot = true;
+        StartCoroutine(DestroyBulletAfterDelay(bullet, bulletLifetime)); // Destroy bullet after lifetime
     }
 
     private IEnumerator Reload()
     {
         isReloading = true;
-        canShoot = false;
-        yield return new WaitForSeconds(reloadTime);
-        currentBulletCount = maxBulletCapacity;
+        yield return new WaitForSeconds(reloadTime); // Wait for reload time
+        currentBulletCount = maxBulletCapacity; // Refill bullets
         isReloading = false;
-        canShoot = true;
     }
 
     private IEnumerator DestroyBulletAfterDelay(GameObject bullet, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Destroy(bullet);
+        Destroy(bullet); // Destroy the bullet after delay
     }
 }

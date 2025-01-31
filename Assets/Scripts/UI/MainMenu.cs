@@ -4,10 +4,14 @@ public class MainMenu : MonoBehaviour
 {
     public void play()
     {
-        SceneManager.LoadSceneAsync(1);
+        SceneManager.LoadSceneAsync("MergeMap");
     }
     public void QuitGame()
     {
         Application.Quit();
+    }
+    public void LoadPlayerController()
+    {
+        SceneManager.LoadSceneAsync("MergeMap");
     }
 }
