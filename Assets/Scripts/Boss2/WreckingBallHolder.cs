@@ -6,10 +6,10 @@ public class WreckingBallHolder : MonoBehaviour
     [SerializeField]
     private Transform playerTransform;
     [SerializeField]
-    private float maxDistance = 91f;
+    private float maxDistance = 87f;
 
     [SerializeField]
-    private float followSpeed = 5f;
+    private float followSpeed = 1f;
 
     private void FixedUpdate()
     {
@@ -17,7 +17,6 @@ public class WreckingBallHolder : MonoBehaviour
         {
             Vector3 targetPosition = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
 
-            // Move towards the player smoothly
             transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
         }
 

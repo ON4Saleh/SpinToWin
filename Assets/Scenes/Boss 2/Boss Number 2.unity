@@ -3673,7 +3673,6 @@ GameObject:
   - component: {fileID: 1250916686}
   - component: {fileID: 1250916685}
   - component: {fileID: 1250916687}
-  - component: {fileID: 1250916688}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -3850,26 +3849,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1179589631}
   swingForce: 900
-  swingInterval: 2
-  enemyHealth: 100
+  swingInterval: 3
   holder: {fileID: 1967123292}
-  isPhase2: 0
-  followSpeed: 5
---- !u!114 &1250916688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1250916680}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13df831644612ea478d5b609818aac1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerTransform: {fileID: 1179589631}
-  rotationSpeed: 100
-  rotationThreshold: 5
 --- !u!1 &1358129829
 GameObject:
   m_ObjectHideFlags: 0
