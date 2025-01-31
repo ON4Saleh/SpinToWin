@@ -2,81 +2,29 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [Header("Bullet Settings")]
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private GameObject impactEffect;
-    [SerializeField] private GameObject bulletHolePrefab;
-    [SerializeField] private float bulletLifetime = 3f;
+    public float speed = 20f;
+    public float lifeTime = 2f;
+    public int damage = 10;  // Damage dealt to the player
 
-    [Header("Bullet health era")]
-    public BulletType bulletType;
-    public float damage;
+    private void Start()
+    {
+        Destroy(gameObject, lifeTime);  // Destroy bullet after a certain time
+    }
+
+    private void Update()
+    {
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);  // Move bullet forward
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-
+        // Check if the bullet collides with the player
         if (collision.gameObject.CompareTag("Player"))
         {
-            HandleBulletHit(collision.gameObject, "Player");
+            // Apply damage to the player
+            HealthManager.instance.TakeDamage(damage);  // Call TakeDamage method on HealthManager
+            Debug.Log("Bullet hit player! Player took " + damage + " damage.");
         }
-        else if (collision.gameObject.CompareTag("Enemy"))
-        {
-            HandleBulletHit(collision.gameObject, "Enemy");
-            Debug.Log("hit enemy" + collision.gameObject.name + "!");
-        }
-        if (impactEffect != null)
-        {
-            ContactPoint contact = collision.contacts[0];
-            Instantiate(impactEffect, contact.point, Quaternion.identity);
-        }
-        if (bulletHolePrefab != null)
-        {
-            ContactPoint contact = collision.contacts[0];
-            GameObject bulletHole = Instantiate(bulletHolePrefab, contact.point + contact.normal * 0.05f, Quaternion.LookRotation(-contact.normal));
-            bulletHole.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            Destroy(bulletHole, 2f);
-        }
-        gameObject.SetActive(false);
-    }
 
-    private void HandleBulletHit(GameObject target, string targetTag)
-    {
-        if (targetTag == "Player")
-        {
-            HandlePlayerBulletHit(target);
-        }
-        else if (targetTag == "Enemy")
-        {
-            HandleEnemyBulletHit(target);
-        }
-    }
-    private void HandlePlayerBulletHit(GameObject enemy)
-    {
-        Enemy enemyStats = enemy.GetComponent<Enemy>();
-        if (enemyStats != null && enemy.name == "Duck")
-        {
-           // enemyStats.enemyWaterLevel -= 30;
-           // Debug.Log("Duck water level: " + enemyStats.enemyWaterLevel); 
-         ///  PlayerController playerController = GameManager.Instance.playerStats;
-          
-
-            //if (enemyStats.enemyWaterLevel <= 0)
-            //{
-            //    Destroy(enemy);
-            //    //playerController.waterLevel += 1000;
-            //    Debug.Log("Duck destroyed!");
-            //}
-        }
-    }
-    private void HandleEnemyBulletHit(GameObject player)
-    {
-       // PlayerController playerController = player.GetComponent<PlayerController>();
-        //if (playerController != null)
-        //{
-        //}
-    }
-    public enum BulletType
-    {
-        PlayerBullet,
-        EnemyBullet
     }
 }

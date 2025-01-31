@@ -1,8 +1,10 @@
 using UnityEngine.AI;
 using UnityEngine;
-using System.IO;
+using System.Collections;
+
 public class Enemy : MonoBehaviour
 {
+   
     private StateMachine stateMachine;
     private NavMeshAgent navMeshAgent;
     [SerializeField] private WaypointPath path;
@@ -21,8 +23,13 @@ public class Enemy : MonoBehaviour
     public Vector3 LastKnownPos { get => lastKnownPosition; set => lastKnownPosition = value; }
     private int currentWaypointIndex = 0;
 
-    [SerializeField] GameObject door; 
-    private bool doorOpen;
+    [SerializeField] private GameObject bulletPrefab; // Reference to the bullet prefab
+    [SerializeField] private Transform bulletSpawnPoint; // Point from where bullets will be spawned
+    [SerializeField] private float bulletSpeed = 20f;
+    [SerializeField] private int bulletsPerBurst = 50; // Number of bullets to fire in a burst
+    [SerializeField] private float timeBetweenBullets = 0.1f; // Time between each bullet in the burst
+
+    private bool isFiring = false; // To prevent overlapping coroutines
 
     private void Start()
     {
@@ -39,7 +46,6 @@ public class Enemy : MonoBehaviour
         }
         EnemyWeaponHolder = transform.GetComponentInChildren<Transform>().Find("EnemyWeaponHolder")?.gameObject;
         Weapon = EnemyWeaponHolder.GetComponentInChildren<Weapon>();
-
     }
 
     private void Update()
@@ -56,6 +62,12 @@ public class Enemy : MonoBehaviour
             currentWaypointIndex = (currentWaypointIndex + 1) % path.waypoints.Count;
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
         }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Enemy died!");
+        Destroy(gameObject);
     }
 
     public bool canSeePlayer()
@@ -94,10 +106,17 @@ public class Enemy : MonoBehaviour
             if (canSeePlayer())
             {
                 animator.SetBool("isShooting", true);
-                navMeshAgent.speed = 3.5f;
+                navMeshAgent.speed = 1.5f;
+             //   Weapon.HandleShooting();
                 EnemyWeaponHolder.gameObject.SetActive(true);
-             
+
                 SoundManager.Instance.PlaySFX("Trump");
+
+                // Start firing a burst of bullets
+                if (!isFiring)
+                {
+                    StartCoroutine(FireBurst());
+                }
             }
         }
         else if (currentState != "AttackState" && animator.GetBool("isShooting"))
@@ -105,14 +124,45 @@ public class Enemy : MonoBehaviour
             animator.SetBool("isShooting", false);
             EnemyWeaponHolder.gameObject.SetActive(false);
             navMeshAgent.speed = 3.5f;
-        
         }
 
         if (currentState != "AttackState")
         {
             navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
             EnemyWeaponHolder.gameObject.SetActive(false);
-    
+        }
+    }
+
+    private IEnumerator FireBurst()
+    {
+        isFiring = true;
+
+        for (int i = 0; i < bulletsPerBurst; i++)
+        {
+            SpawnBullet();
+            yield return new WaitForSeconds(timeBetweenBullets); // Wait before firing the next bullet
+        }
+
+        isFiring = false;
+    }
+
+    private void SpawnBullet()
+    {
+        if (bulletPrefab != null && bulletSpawnPoint != null)
+        {
+            // Instantiate the bullet at the spawn point
+            GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+
+            // Add a small random spread to the bullet direction for realism
+            Vector3 randomSpread = Random.insideUnitSphere * 0.1f; // Adjust the spread amount
+            bullet.transform.forward = bulletSpawnPoint.forward + randomSpread;
+
+            // Add velocity to the bullet
+            Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
+            if (bulletRigidbody != null)
+            {
+                bulletRigidbody.linearVelocity = bullet.transform.forward * bulletSpeed;
+            }
         }
     }
 }

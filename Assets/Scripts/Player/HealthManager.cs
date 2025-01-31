@@ -57,7 +57,25 @@ public class HealthManager : MonoBehaviour
             SceneManager.LoadScene("GameOver");
         }
     }
+    // Method to handle taking damage
+    public void TakeDamage(int damageAmount)
+    {
+        health -= damageAmount;  // Decrease health by damage amount
+        health = Mathf.Clamp(health, 0, maxHealth);  // Clamp health to 0 if it goes negative
+        Debug.Log("Player took " + damageAmount + " damage. Current Health: " + health);
 
+        // Update the health UI after damage
+        UpdateHealthUI();
+        UpdateScoreUI();
+
+        // If health reaches 0, the player dies and game over
+        if (health <= 0)
+        {
+            Debug.Log("Player has died! Game Over.");
+            Time.timeScale = 1f;
+            SceneManager.LoadScene("GameOver");
+        }
+    }
     // Updates the health bar UI
     public void UpdateHealthUI()
     {
