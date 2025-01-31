@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             // Apply damage to the player
-            HealthManager.instance.TakeDamage(damage);  // Call TakeDamage method on HealthManager
+            HealthManager.instance.TakeDamage(damage);  // Call TakeDamage method on HealthManager 
             Debug.Log("Bullet hit player! Player took " + damage + " damage.");
         }
 

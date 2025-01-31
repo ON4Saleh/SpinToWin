@@ -4253,6 +4253,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: {fileID: 1173900922}
+  navmeshspeedinitial: 6
+  navmeshspeedattack: 10
   player: {fileID: 1767767977}
   sightDistance: 75.7
   fieldOfView: 130.7
