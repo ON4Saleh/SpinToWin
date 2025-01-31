@@ -21,7 +21,7 @@ public class RotateWreckingBall : MonoBehaviour
     void FixedUpdate()
     {
 
-        RotateToPlayer();
+        //RotateToPlayer();
     }
 
    

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Cinemachine Target
   - Ground
+  - Chain
   layers:
   - Default
   - TransparentFX

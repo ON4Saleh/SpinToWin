@@ -6,13 +6,24 @@ public class WreckingBallController : MonoBehaviour
     public Transform player; // Reference to the player's transform
     public float swingForce = 10f; // Force applied to swing the ball
     public float swingInterval = 3f; // Time between swings (in seconds)
+    [SerializeField]
+    private float enemyHealth = 10f;
+    [SerializeField]
+    private GameObject holder;
+
+    Rigidbody[] ChainsRb;
+
 
     private Rigidbody rb;
     private RotateWreckingBall rotateWreckingBall;
 
+
+    
+
     [Header("Phase 2")]
     [SerializeField]
     private bool isPhase2 = false;
+    [SerializeField]
     private float followSpeed = 5f;
 
     void Start()
@@ -27,40 +38,58 @@ public class WreckingBallController : MonoBehaviour
         }
 
         StartCoroutine(SwingLoop());
+        ChainsRb = holder.GetComponentsInChildren<Rigidbody>();
     }
 
     private System.Collections.IEnumerator SwingLoop()
     {
         while (!isPhase2)
         {
-            // Wait until the wrecking ball is rotated toward the player
-            yield return new WaitUntil(() => rotateWreckingBall.IsRotatedTowardPlayer);
+            // Wait for the swing interval before applying force
+            yield return new WaitForSeconds(swingInterval);
 
             // Apply force toward the player (only on X and Z axes)
             SwingTowardPlayer();
-
-            // Wait for the swing interval before the next swing
-            yield return new WaitForSeconds(swingInterval);
         }
     }
-    private void FixedUpdate()
+
+    void FixedUpdate()
     {
         if (isPhase2)
             FollowPlayer();
-       
-        
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            enemyHealth -= 1;
+            if (enemyHealth < 5f)
+            {
+                isPhase2 = true;
+            }
+
+            // Push the ball away from the player on collision
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            directionToPlayer.y = 0; // Restrict movement to the X and Z axes
+            rb.AddForce(-directionToPlayer * swingForce, ForceMode.Impulse);
+        }
     }
 
     public void FollowPlayer()
     {
-
+        // Remove the HingeJoint component in Phase 2
         HingeJoint hingeJoint = gameObject.GetComponent<HingeJoint>();
-        Destroy(hingeJoint);
-        Vector3 targetPosition = new Vector3(player.position.x, player.position.y, player.position.z);
+        if (hingeJoint != null)
+        {
+            Destroy(hingeJoint);
+        }
 
-        transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+        // Move the ball toward the player in Phase 2
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        directionToPlayer.y = 0; // Restrict movement to the X and Z axes
+        rb.linearVelocity = directionToPlayer * followSpeed;
     }
-
 
     private void SwingTowardPlayer()
     {
@@ -72,11 +101,15 @@ public class WreckingBallController : MonoBehaviour
 
         // Calculate the direction to the player
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
-
-        // Remove the Y component to restrict movement to the X and Z axes
-        directionToPlayer.y = 0;
+        directionToPlayer.y = 0; // Restrict movement to the X and Z axes
 
         // Apply force in the direction of the player (only on X and Z axes)
+        foreach(Rigidbody rb in ChainsRb)
+        {
+            if(!rb.isKinematic)
+            rb.linearVelocity = Vector3.zero;
+        }
         rb.AddForce(directionToPlayer * swingForce, ForceMode.Impulse);
+        
     }
 }

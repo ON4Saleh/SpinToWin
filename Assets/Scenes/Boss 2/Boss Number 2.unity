@@ -3849,8 +3849,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1179589631}
-  swingForce: 1000
-  swingInterval: 7
+  swingForce: 900
+  swingInterval: 2
+  enemyHealth: 100
+  holder: {fileID: 1967123292}
+  isPhase2: 0
+  followSpeed: 5
 --- !u!114 &1250916688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3858,7 +3862,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250916680}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13df831644612ea478d5b609818aac1e, type: 3}
   m_Name: 
@@ -5284,6 +5288,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1179589631}
+  maxDistance: 87
+  followSpeed: 1
 --- !u!1 &1968521350
 GameObject:
   m_ObjectHideFlags: 0
@@ -6167,6 +6173,10 @@ PrefabInstance:
     - target: {fileID: 8353874250973331306, guid: 2c361a044432b324eb5c9281075bee92, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8353874250973331306, guid: 2c361a044432b324eb5c9281075bee92, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
