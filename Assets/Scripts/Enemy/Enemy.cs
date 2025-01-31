@@ -10,7 +10,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private WaypointPath path;
     private Animator animator;
     private Weapon Weapon;
-    public NavMeshAgent NavMeshAgent => navMeshAgent;
+    public NavMeshAgent NavMeshAgent => navMeshAgent ;
+    [SerializeField] float navmeshspeedinitial = 6;
+    [SerializeField] float navmeshspeedattack = 10;
     public WaypointPath WayPath => path;
     public GameObject player;
     public float sightDistance = 20f;
@@ -22,7 +24,6 @@ public class Enemy : MonoBehaviour
     private Vector3 lastKnownPosition;
     public Vector3 LastKnownPos { get => lastKnownPosition; set => lastKnownPosition = value; }
     private int currentWaypointIndex = 0;
-
     [SerializeField] private GameObject bulletPrefab; // Reference to the bullet prefab
     [SerializeField] private Transform bulletSpawnPoint; // Point from where bullets will be spawned
     [SerializeField] private float bulletSpeed = 20f;
@@ -80,6 +81,15 @@ public class Enemy : MonoBehaviour
             {
                 Vector3 targetDirection = player.transform.position - transform.position - Vector3.up * eyeHeight;
                 float angleToPlayer = Vector3.Angle(targetDirection, transform.forward);
+                //Vector3 directionToPlayer = playerTransform.position - transform.position;
+
+                //directionToPlayer.y = 0; // Optional: Keep the rotation only on the Y axis
+
+                //// Create a rotation that looks at the player
+                //Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+
+                //// Smoothly rotate towards the player
+                //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
                 if (angleToPlayer >= -fieldOfView && angleToPlayer <= fieldOfView)
                 {
@@ -106,8 +116,8 @@ public class Enemy : MonoBehaviour
             if (canSeePlayer())
             {
                 animator.SetBool("isShooting", true);
-                navMeshAgent.speed = 1.5f;
-             //   Weapon.HandleShooting();
+                navMeshAgent.speed = navmeshspeedinitial;
+                //   Weapon.HandleShooting();
                 EnemyWeaponHolder.gameObject.SetActive(true);
 
                 SoundManager.Instance.PlaySFX("Trump");
@@ -123,7 +133,7 @@ public class Enemy : MonoBehaviour
         {
             animator.SetBool("isShooting", false);
             EnemyWeaponHolder.gameObject.SetActive(false);
-            navMeshAgent.speed = 3.5f;
+            navMeshAgent.speed = navmeshspeedattack;
         }
 
         if (currentState != "AttackState")

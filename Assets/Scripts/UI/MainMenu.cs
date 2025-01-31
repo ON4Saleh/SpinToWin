@@ -14,4 +14,8 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("MergeMap");
     }
+    public void SwitchCharacter()
+    {
+        SceneManager.LoadSceneAsync("SwitchCharacter");
+    }
 }
