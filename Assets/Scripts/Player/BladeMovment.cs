@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BladeMovement : MonoBehaviour
+public class ThrdEnemyMovement : MonoBehaviour
 {
     private Rigidbody rb;
     public float pushForce = 10f;  // Force applied when clicking
