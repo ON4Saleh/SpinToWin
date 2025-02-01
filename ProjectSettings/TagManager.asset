@@ -5,13 +5,19 @@ TagManager:
   serializedVersion: 3
   tags:
   - Cinemachine Target
+  - Wall
+  - Enemy
   - Ground
-  - Chain
+  - EnemyWeapon
+  - Target
+  - EnemyBullet
+  - Bullet
+  - Enemy2
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 

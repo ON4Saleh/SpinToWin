@@ -81,15 +81,6 @@ public class Enemy : MonoBehaviour
             {
                 Vector3 targetDirection = player.transform.position - transform.position - Vector3.up * eyeHeight;
                 float angleToPlayer = Vector3.Angle(targetDirection, transform.forward);
-                //Vector3 directionToPlayer = playerTransform.position - transform.position;
-
-                //directionToPlayer.y = 0; // Optional: Keep the rotation only on the Y axis
-
-                //// Create a rotation that looks at the player
-                //Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
-
-                //// Smoothly rotate towards the player
-                //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
                 if (angleToPlayer >= -fieldOfView && angleToPlayer <= fieldOfView)
                 {
@@ -100,61 +91,70 @@ public class Enemy : MonoBehaviour
                     {
                         if (hitInfo.transform.gameObject == player)
                         {
+                            navMeshAgent.angularSpeed = 60f;
+
                             return true;
                         }
                     }
                 }
             }
         }
+        navMeshAgent.angularSpeed = 120f; 
+
         return false;
     }
 
-    private void HandleMovement()
+
+private void HandleMovement()
+{
+    if (currentState == "AttackState" && !animator.GetBool("isShooting"))
     {
-        if (currentState == "AttackState" && !animator.GetBool("isShooting"))
+        if (canSeePlayer())
         {
-            if (canSeePlayer())
+            animator.SetBool("isShooting", true);
+            navMeshAgent.speed = navmeshspeedinitial;
+            EnemyWeaponHolder.gameObject.SetActive(true);
+
+            SoundManager.Instance.PlaySFX("Trump");
+
+            // Start firing a burst of bullets if not already firing
+            if (!isFiring)
             {
-                animator.SetBool("isShooting", true);
-                navMeshAgent.speed = navmeshspeedinitial;
-                //   Weapon.HandleShooting();
-                EnemyWeaponHolder.gameObject.SetActive(true);
-
-                SoundManager.Instance.PlaySFX("Trump");
-
-                // Start firing a burst of bullets
-                if (!isFiring)
-                {
-                    StartCoroutine(FireBurst());
-                }
+                StartCoroutine(FireBurst());
             }
         }
-        else if (currentState != "AttackState" && animator.GetBool("isShooting"))
-        {
-            animator.SetBool("isShooting", false);
-            EnemyWeaponHolder.gameObject.SetActive(false);
-            navMeshAgent.speed = navmeshspeedattack;
-        }
-
-        if (currentState != "AttackState")
-        {
-            navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
-            EnemyWeaponHolder.gameObject.SetActive(false);
-        }
     }
-
-    private IEnumerator FireBurst()
+    else if (currentState != "AttackState" && animator.GetBool("isShooting"))
     {
-        isFiring = true;
-
-        for (int i = 0; i < bulletsPerBurst; i++)
-        {
-            SpawnBullet();
-            yield return new WaitForSeconds(timeBetweenBullets); // Wait before firing the next bullet
-        }
-
-        isFiring = false;
+        animator.SetBool("isShooting", false);
+        EnemyWeaponHolder.gameObject.SetActive(false);
+        navMeshAgent.speed = navmeshspeedattack;
     }
+
+    if (currentState != "AttackState")
+    {
+        navMeshAgent.SetDestination(path.waypoints[currentWaypointIndex].position);
+        EnemyWeaponHolder.gameObject.SetActive(false);
+    }
+}
+
+private IEnumerator FireBurst()
+{
+    isFiring = true;
+
+    // 🔸 Shoot a burst of bullets
+    for (int i = 0; i < bulletsPerBurst; i++)
+    {
+        SpawnBullet();
+        yield return new WaitForSeconds(timeBetweenBullets); // Wait before firing the next bullet
+    }
+
+    // 🔸 Wait for 10 seconds after completing the burst before allowing next burst
+    yield return new WaitForSeconds(10f);
+
+    isFiring = false;
+}
+
 
     private void SpawnBullet()
     {
@@ -164,7 +164,7 @@ public class Enemy : MonoBehaviour
             GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 
             // Add a small random spread to the bullet direction for realism
-            Vector3 randomSpread = Random.insideUnitSphere * 0.1f; // Adjust the spread amount
+            Vector3 randomSpread = Random.insideUnitSphere * 1f; // Adjust the spread amount
             bullet.transform.forward = bulletSpawnPoint.forward + randomSpread;
 
             // Add velocity to the bullet

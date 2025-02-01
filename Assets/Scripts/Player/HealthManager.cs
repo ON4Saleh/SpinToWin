@@ -2,14 +2,17 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class HealthManager : MonoBehaviour
 {
     [Header("Health Settings")]
-    private int maxHealth = 120;  // Set max health
+    private int maxHealth = 100;  // Set max health
     private int wallDamage = 4;   // Wall damage
-    private int enemyDamage = 15; // Enemy damage
+    private int enemyDamage = 3;  // Healing from enemy (not damage)
+    private int bulletDamage = 1; // Bullet damage
 
     private int health = 200; // Current health of the player
+    private int bulletCount = 0;  // To track how many bullets have hit the player
 
     [Header("Player UI")]
     public Image HealthImg; // UI Health Bar
@@ -36,17 +39,20 @@ public class HealthManager : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Enemy"))
         {
-            health -= enemyDamage;  // Decrease health if colliding with enemy
-            Debug.Log("Hit an enemy! Took damage. Health: " + health);
+            health += enemyDamage;  // Instead of damage, player now heals
+            Debug.Log("Touched an enemy! Healed " + enemyDamage + ". Health: " + health);
+        }
+        else if (collision.gameObject.CompareTag("Enemy2"))
+        {
+            health += enemyDamage;  // Instead of damage, player now heals
+            Debug.Log("Touched an enemy! Healed " + enemyDamage + ". Health: " + health);
         }
 
-        // Clamp health to ensure it's between 0 and maxHealth
+        // Clamp health to ensure it doesn't exceed maxHealth
         health = Mathf.Clamp(health, 0, maxHealth);
 
         // Update the health UI
         UpdateHealthUI();
-
-        // Update health score UI
         UpdateScoreUI();
 
         // If health reaches 0, the player dies and game over
@@ -57,6 +63,23 @@ public class HealthManager : MonoBehaviour
             SceneManager.LoadScene("GameOver");
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Bullet"))
+        {
+            bulletCount++;  // Increment the bullet collision count
+            Debug.Log("Hit by a bullet! Bullet count: " + bulletCount);
+
+            // Check if the player has been hit by 4 bullets
+            if (bulletCount >= 2)
+            {
+                TakeDamage(bulletDamage);  // Take damage after 4 bullets
+                bulletCount = 0;  // Reset the bullet count
+            }
+        }
+    }
+
     // Method to handle taking damage
     public void TakeDamage(int damageAmount)
     {
@@ -76,6 +99,7 @@ public class HealthManager : MonoBehaviour
             SceneManager.LoadScene("GameOver");
         }
     }
+
     // Updates the health bar UI
     public void UpdateHealthUI()
     {

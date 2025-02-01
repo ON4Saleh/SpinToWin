@@ -4,9 +4,9 @@ using UnityEngine.UI;
 public class EnemyHealthManagment : MonoBehaviour
 {
     [Header("Health Settings")]
-    int maxHealth = 50; // Increased to make enemies stronger
-    int wallDamage = 8;  // Increased wall damage for more impact
-    int playerDamage = 20; // Decreased player damage for balance
+    int maxHealth = 150; // Increased to make enemies stronger
+    int wallDamage = 3;  // Increased wall damage for more impact
+    int playerDamage = 4; // Decreased player damage for balance
 
     private int health;
 

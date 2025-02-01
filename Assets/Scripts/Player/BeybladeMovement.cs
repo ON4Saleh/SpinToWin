@@ -80,6 +80,35 @@ public class BeybladeMovement : MonoBehaviour
             return;
         }
 
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // Calculate collision force (impulse magnitude)
+        float impactForce = collision.impulse.magnitude;
+
+        // Calculate the push-back force (double the impact force)
+        float pushBackForce = impactForce * 3;
+
+        // Get the collision normal (direction perpendicular to the surface)
+        Vector3 collisionNormal = collision.contacts[0].normal;
+
+        // Apply force in the opposite direction of the impact
+        rb.AddForce(collisionNormal * pushBackForce, ForceMode.Impulse);
+        }
+        else if (collision.gameObject.CompareTag("Enemy2"))
+        {
+            // Calculate collision force (impulse magnitude)
+        float impactForce = collision.impulse.magnitude;
+
+        // Calculate the push-back force (double the impact force)
+        float pushBackForce = impactForce;
+
+        // Get the collision normal (direction perpendicular to the surface)
+        Vector3 collisionNormal = collision.contacts[0].normal;
+
+        // Apply force in the opposite direction of the impact
+        rb.AddForce(collisionNormal * pushBackForce, ForceMode.Impulse);
+        }else{
+
         // Calculate collision force (impulse magnitude)
         float impactForce = collision.impulse.magnitude;
 
@@ -91,5 +120,7 @@ public class BeybladeMovement : MonoBehaviour
 
         // Apply force in the opposite direction of the impact
         rb.AddForce(collisionNormal * pushBackForce, ForceMode.Impulse);
+        }
+
     }
 }
