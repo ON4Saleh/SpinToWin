@@ -18,24 +18,25 @@ public class Enemy : MonoBehaviour
     public float sightDistance = 20f;
     public float fieldOfView = 85f;
     [SerializeField] string currentState;
-
+    [SerializeField] private float bossSpeed = 25f;
     private GameObject EnemyWeaponHolder;
     [SerializeField] private float eyeHeight;
     private Vector3 lastKnownPosition;
     public Vector3 LastKnownPos { get => lastKnownPosition; set => lastKnownPosition = value; }
     private int currentWaypointIndex = 0;
-    [SerializeField] private GameObject bulletPrefab; // Reference to the bullet prefab
-    [SerializeField] private Transform bulletSpawnPoint; // Point from where bullets will be spawned
+    [SerializeField] private GameObject bulletPrefab; 
+    [SerializeField] private Transform bulletSpawnPoint; 
     [SerializeField] private float bulletSpeed = 20f;
-    [SerializeField] private int bulletsPerBurst = 50; // Number of bullets to fire in a burst
-    [SerializeField] private float timeBetweenBullets = 0.1f; // Time between each bullet in the burst
+    [SerializeField] private int bulletsPerBurst = 50;
+    [SerializeField] private float timeBetweenBullets = 0.1f;
 
-    private bool isFiring = false; // To prevent overlapping coroutines
+    private bool isFiring = false; 
 
     private void Start()
     {
         stateMachine = GetComponent<StateMachine>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        NavMeshAgent.speed = bossSpeed;
         animator = GetComponent<Animator>();
         Weapon = GetComponent<Weapon>();
         stateMachine.Initialize();

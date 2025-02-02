@@ -1003,6 +1003,7 @@ MonoBehaviour:
   levelScenes: []
   winScene: YouWin
   loseScene: YouLose
+  startText: {fileID: 0}
 --- !u!4 &424332043
 Transform:
   m_ObjectHideFlags: 0
@@ -4552,6 +4553,7 @@ MonoBehaviour:
   sightDistance: 66.7
   fieldOfView: 74.7
   currentState: 
+  bossSpeed: 25
   eyeHeight: 0
   bulletPrefab: {fileID: 0}
   bulletSpawnPoint: {fileID: 0}
@@ -4617,7 +4619,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2.63
+  m_Radius: 3.4
   m_Center: {x: 0, y: 2.83, z: 0}
 --- !u!1 &1975946249
 GameObject:
@@ -4829,6 +4831,7 @@ MonoBehaviour:
   levelScenes: []
   winScene: YouWin
   loseScene: YouLose
+  startText: {fileID: 0}
 --- !u!1 &2029882585
 GameObject:
   m_ObjectHideFlags: 0
