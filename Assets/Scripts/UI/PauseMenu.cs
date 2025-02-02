@@ -24,7 +24,6 @@ public class PauseMenu : MonoBehaviour
     public void resume()
     {
         pauseMenuUI.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1;
         AudioListener.volume = 1f;
         GameisPaused = false;
@@ -41,7 +40,7 @@ public class PauseMenu : MonoBehaviour
     public void loadMenu()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("");
     }
     public void quitGame()
     {

@@ -4,6 +4,8 @@ public class MainMenu : MonoBehaviour
 {
     public void play()
     {
+
+        Time.timeScale = 1;
         SceneManager.LoadSceneAsync("MergeMap");
     }
     public void QuitGame()

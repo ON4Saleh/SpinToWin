@@ -1,61 +1,96 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI; // For UI Text
+using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     private int enemiesRemaining;
+    private int currentEnemyIndex = 0; 
 
-    [SerializeField] private string nextLevelScene = "MergeMapLvl2"; // Set in Inspector
+    [SerializeField] private string[] levelScenes; 
     [SerializeField] private string winScene = "YouWin";
-
+    [SerializeField] private string loseScene = "YouLose";
+    [SerializeField] private Text startText;
     private void Awake()
     {
-        // Singleton pattern to ensure only one GameManager exists
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // Keep the GameManager across scenes
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
     }
-
     private void Start()
     {
-        // Delay the setting of the enemy count to allow all enemies to spawn
+        // Start the coroutine to display the "press mouse" message
+        StartCoroutine(ShowStartText());
+
         Invoke(nameof(SetEnemyCount), 0.5f);
     }
+    private IEnumerator ShowStartText()
+    {
+        // Show the text for 3 seconds, or until the mouse is clicked
+        startText.gameObject.SetActive(true); // Make sure the text is visible
+        float timer = 0f;
 
+        // Show the text for 3 seconds or until mouse click
+        while (timer < 3f)
+        {
+            // Debug log to check the timer
+            Debug.Log("Timer: " + timer);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("Mouse clicked, hiding text.");
+                break; // Exit if mouse click is detected
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Hide the text after 3 seconds or when the mouse is clicked
+        Debug.Log("Hiding start text after 3 seconds or mouse click.");
+        startText.gameObject.SetActive(false);
+    }
     public void SetEnemyCount()
     {
-        // Find all enemies in the scene and count them
-        enemiesRemaining = FindObjectsOfType<EnemyHealthManagment>().Length;
+        enemiesRemaining = GameObject.FindGameObjectsWithTag("Enemy").Length;
         Debug.Log("Total Enemies in Scene: " + enemiesRemaining);
     }
 
     public void EnemyDied()
     {
-        // Decrease the number of remaining enemies when one dies
         enemiesRemaining--;
         Debug.Log("Enemy defeated! Remaining enemies: " + enemiesRemaining);
 
         if (enemiesRemaining <= 0)
         {
-            // If all enemies are defeated, load the win screen or the next level
             Debug.Log("All enemies defeated. Moving to next scene...");
 
-            // Check if the current scene is not the final level
-            if (SceneManager.GetActiveScene().name != "MergeMapLvl2")
+            // Ensure there's another level to load before moving to win screen
+            if (currentEnemyIndex < levelScenes.Length)
             {
-                SceneManager.LoadScene(nextLevelScene); // Load next level
+                // Load next level in the sequence
+                SceneManager.LoadScene(levelScenes[currentEnemyIndex]);
+                currentEnemyIndex++;
             }
             else
             {
-                SceneManager.LoadScene(winScene); // Load win screen
+                // Once all levels are done, show the win screen
+                SceneManager.LoadScene(winScene);
             }
         }
+    }
+
+
+    public void PlayerLost()
+    {
+        Debug.Log("Player lost! Moving to lose scene...");
+        SceneManager.LoadScene(loseScene); 
     }
 }
